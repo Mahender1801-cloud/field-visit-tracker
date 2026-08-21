@@ -2,9 +2,11 @@ import { requireProfile } from "@/lib/auth";
 import { SalesmanNav } from "@/components/salesman-nav";
 import { signOut } from "./actions";
 import { LogOut } from "lucide-react";
+import { redirect } from "next/navigation";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const profile = await requireProfile();
+  if (profile.role === "admin") redirect("/admin");
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
