@@ -1,0 +1,12 @@
+{
+  "name": "FieldTrack — Sales Visit Tracker",
+  "short_name": "FieldTrack",
+  "description": "Punch in, log shop visits, and track your sales team in the field.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f5f7fa",
+  "theme_color": "#2554ec",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}
