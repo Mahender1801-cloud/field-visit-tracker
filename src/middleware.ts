@@ -37,14 +37,22 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  if (user && isAdminPath) {
+  if (user && !isAuthPage) {
     const { data: profile } = await supabase
       .from("profiles")
-      .select("role")
+      .select("role, active")
       .eq("id", user.id)
       .single();
 
-    if (profile?.role !== "admin") {
+    if (profile && !profile.active) {
+      await supabase.auth.signOut();
+      const url = request.nextUrl.clone();
+      url.pathname = "/login";
+      url.searchParams.set("deactivated", "1");
+      return NextResponse.redirect(url);
+    }
+
+    if (isAdminPath && profile?.role !== "admin") {
       const url = request.nextUrl.clone();
       url.pathname = "/";
       return NextResponse.redirect(url);

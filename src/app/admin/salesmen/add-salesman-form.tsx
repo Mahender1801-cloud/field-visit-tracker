@@ -48,6 +48,10 @@ export function AddSalesmanForm() {
             <Input id="email" name="email" type="email" required />
           </div>
           <div>
+            <Label htmlFor="username">User ID</Label>
+            <Input id="username" name="username" placeholder="optional, for login without email" />
+          </div>
+          <div>
             <Label htmlFor="password">Temporary password *</Label>
             <Input id="password" name="password" minLength={6} required placeholder="min. 6 characters" />
           </div>

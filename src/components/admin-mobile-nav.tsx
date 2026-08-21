@@ -11,6 +11,7 @@ const items = [
   { href: "/admin/visits", label: "Visits" },
   { href: "/admin/salesmen", label: "Salesmen" },
   { href: "/admin/expenses", label: "Expenses" },
+  { href: "/admin/settings", label: "Settings" },
 ];
 
 export function AdminMobileNav() {

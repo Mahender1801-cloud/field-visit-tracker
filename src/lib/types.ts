@@ -14,6 +14,7 @@ export type Profile = {
   role: UserRole;
   full_name: string;
   phone: string | null;
+  username: string | null;
   active: boolean;
   created_at: string;
 };
