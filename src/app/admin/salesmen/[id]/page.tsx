@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { requireAdmin } from "@/lib/auth";
 import { notFound } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,7 +7,7 @@ import { StatusBadge } from "@/components/ui/badge";
 import { SalesmanToggle } from "../salesman-toggle";
 import { EditSalesmanModal } from "../edit-salesman-modal";
 import { ImageViewerButton } from "@/components/image-viewer";
-import { formatDate, formatTime, formatCurrency, formatDuration, cn } from "@/lib/utils";
+import { formatDate, formatTime, formatCurrency, formatDuration, istDateString, toIST, cn } from "@/lib/utils";
 import Link from "next/link";
 import { ChevronLeft, Phone, MapPin, Clock } from "lucide-react";
 
@@ -18,9 +19,15 @@ export default async function SalesmanDetailPage({ params }: { params: Promise<{
   const { data: salesman } = await supabase.from("profiles").select("*").eq("id", id).eq("role", "salesman").maybeSingle();
   if (!salesman) notFound();
 
+  const admin = createAdminClient();
+  const { data: userRes } = await admin.auth.admin.getUserById(id);
+  const emailRaw = userRes.user?.email ?? "";
+  const email = emailRaw.endsWith("@fieldtrack.internal") ? "" : emailRaw;
+
   const now = new Date();
-  const weekAgo = new Date(now.getTime() - 6 * 86400000).toISOString().slice(0, 10);
-  const monthAgo = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10);
+  const weekAgo = istDateString(new Date(now.getTime() - 6 * 86400000));
+  const istNow = toIST(now);
+  const monthAgo = `${istNow.getUTCFullYear()}-${String(istNow.getUTCMonth() + 1).padStart(2, "0")}-01`;
 
   const [{ data: visits }, { data: expenses }] = await Promise.all([
     supabase.from("visits").select("*").eq("salesman_id", id).order("created_at", { ascending: false }).limit(100),
@@ -45,11 +52,12 @@ export default async function SalesmanDetailPage({ params }: { params: Promise<{
             <SalesmanToggle id={salesman.id} active={salesman.active} />
           </div>
           <p className="text-sm text-muted">
-            {salesman.phone ?? "No phone"}
+            {email || <span className="italic">no email set</span>}
+            {salesman.phone ? ` · ${salesman.phone}` : ""}
             {salesman.username ? ` · User ID: ${salesman.username}` : ""} · Joined {formatDate(salesman.created_at)}
           </p>
         </div>
-        <EditSalesmanModal salesman={salesman} />
+        <EditSalesmanModal salesman={salesman} email={email} />
       </div>
 
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">

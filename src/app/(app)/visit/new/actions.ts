@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { istDateString } from "@/lib/utils";
 import type { ShopType } from "@/lib/types";
 
 async function uploadPhoto(
@@ -45,6 +46,7 @@ export async function punchInAtShop(_prevState: { error: string } | null, formDa
     const { error } = await supabase.from("visits").insert({
       id: visitId,
       salesman_id: user.id,
+      visit_date: istDateString(),
       shopkeeper_name: shopkeeperName,
       phone: String(formData.get("phone") ?? "") || null,
       type: (formData.get("type") as ShopType) || "Retailer",

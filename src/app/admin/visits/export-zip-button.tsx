@@ -4,10 +4,11 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PackageOpen, X } from "lucide-react";
+import { istDateString } from "@/lib/utils";
 
 export function ExportZipButton() {
   const [open, setOpen] = useState(false);
-  const [date, setDate] = useState(() => new Date().toISOString().slice(0, 10));
+  const [date, setDate] = useState(() => istDateString());
 
   if (!open) {
     return (

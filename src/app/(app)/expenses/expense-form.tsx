@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { PhotoCapture } from "@/components/photo-capture";
+import { istDateString } from "@/lib/utils";
 
 export function ExpenseForm() {
   const [state, formAction, pending] = useActionState(submitExpense, null);
@@ -22,7 +23,7 @@ export function ExpenseForm() {
           <div className="grid grid-cols-2 gap-3">
             <div>
               <Label htmlFor="expense_date">Date</Label>
-              <Input id="expense_date" name="expense_date" type="date" defaultValue={new Date().toISOString().slice(0, 10)} required />
+              <Input id="expense_date" name="expense_date" type="date" defaultValue={istDateString()} required />
             </div>
             <div>
               <Label htmlFor="amount">Amount (₹)</Label>

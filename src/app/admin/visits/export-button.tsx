@@ -4,7 +4,7 @@ import Papa from "papaparse";
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 import type { Visit } from "@/lib/types";
-import { formatDate, formatTime, formatDuration } from "@/lib/utils";
+import { formatDate, formatTime, formatDuration, istDateString } from "@/lib/utils";
 
 export function ExportCsvButton({ rows }: { rows: (Visit & { salesman_name: string })[] }) {
   function exportCsv() {
@@ -31,7 +31,7 @@ export function ExportCsvButton({ rows }: { rows: (Visit & { salesman_name: stri
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `visits-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.download = `visits-${istDateString()}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   }

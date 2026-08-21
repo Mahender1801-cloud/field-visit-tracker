@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { StatusBadge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { formatDate, formatTime, formatDuration, cn } from "@/lib/utils";
+import { formatDate, formatTime, formatDuration, istDateString, toIST, cn } from "@/lib/utils";
 import { Phone, MapPin, Clock } from "lucide-react";
 import Link from "next/link";
 
@@ -12,17 +12,19 @@ type Period = "today" | "week" | "month" | "all";
 
 function periodRange(period: Period) {
   const now = new Date();
-  const iso = (d: Date) => d.toISOString().slice(0, 10);
+  const today = istDateString(now);
+  const ist = toIST(now);
 
-  if (period === "today") return { from: iso(now), to: iso(now) };
+  if (period === "today") return { from: today, to: today };
   if (period === "week") {
-    const day = now.getDay();
-    const monday = new Date(now);
-    monday.setDate(now.getDate() - ((day + 6) % 7));
-    return { from: iso(monday), to: iso(now) };
+    const day = ist.getUTCDay();
+    const monday = new Date(ist);
+    monday.setUTCDate(ist.getUTCDate() - ((day + 6) % 7));
+    return { from: monday.toISOString().slice(0, 10), to: today };
   }
   if (period === "month") {
-    return { from: iso(new Date(now.getFullYear(), now.getMonth(), 1)), to: iso(now) };
+    const monthStart = new Date(Date.UTC(ist.getUTCFullYear(), ist.getUTCMonth(), 1));
+    return { from: monthStart.toISOString().slice(0, 10), to: today };
   }
   return null;
 }

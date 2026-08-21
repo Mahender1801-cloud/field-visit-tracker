@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { VisitTrendChart, StateBarChart, StatusPieChart } from "@/components/charts";
-import { formatDate } from "@/lib/utils";
+import { formatDate, istDateString } from "@/lib/utils";
 import { Users, Store, CalendarCheck, Radio } from "lucide-react";
 
 const DAY_MS = 86400000;
@@ -9,9 +9,9 @@ const DAY_MS = 86400000;
 export default async function AdminDashboard() {
   const supabase = await createClient();
   const now = new Date();
-  const todayStr = now.toISOString().slice(0, 10);
-  const weekAgo = new Date(now.getTime() - 6 * DAY_MS).toISOString().slice(0, 10);
-  const fortnightAgo = new Date(now.getTime() - 13 * DAY_MS).toISOString().slice(0, 10);
+  const todayStr = istDateString(now);
+  const weekAgo = istDateString(new Date(now.getTime() - 6 * DAY_MS));
+  const fortnightAgo = istDateString(new Date(now.getTime() - 13 * DAY_MS));
 
   const [{ data: visits }, { data: profiles }] = await Promise.all([
     supabase.from("visits").select("*").gte("visit_date", fortnightAgo).order("visit_date", { ascending: true }),
@@ -26,7 +26,7 @@ export default async function AdminDashboard() {
 
   const trend: Record<string, number> = {};
   for (let i = 0; i < 14; i++) {
-    const d = new Date(now.getTime() - (13 - i) * DAY_MS).toISOString().slice(0, 10);
+    const d = istDateString(new Date(now.getTime() - (13 - i) * DAY_MS));
     trend[d] = 0;
   }
   all.forEach((v) => {

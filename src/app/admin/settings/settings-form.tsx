@@ -3,7 +3,7 @@
 import { useActionState } from "react";
 import { updateAccount } from "./actions";
 import { Button } from "@/components/ui/button";
-import { Input, Label } from "@/components/ui/input";
+import { Input, Label, PasswordInput } from "@/components/ui/input";
 
 export function SettingsForm({ fullName, username, email }: { fullName: string; username: string; email: string }) {
   const [state, formAction, pending] = useActionState(updateAccount, null);
@@ -25,7 +25,7 @@ export function SettingsForm({ fullName, username, email }: { fullName: string; 
       </div>
       <div>
         <Label htmlFor="new_password">New password</Label>
-        <Input id="new_password" name="new_password" type="password" placeholder="Leave blank to keep current password" />
+        <PasswordInput id="new_password" name="new_password" placeholder="Leave blank to keep current password" />
       </div>
 
       {state?.error ? (

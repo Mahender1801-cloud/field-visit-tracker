@@ -3,11 +3,11 @@
 import { useActionState, useEffect, useState } from "react";
 import { updateSalesman } from "./actions";
 import { Button } from "@/components/ui/button";
-import { Input, Label } from "@/components/ui/input";
+import { Input, Label, PasswordInput } from "@/components/ui/input";
 import { Pencil, X } from "lucide-react";
 import type { Profile } from "@/lib/types";
 
-export function EditSalesmanModal({ salesman }: { salesman: Profile }) {
+export function EditSalesmanModal({ salesman, email }: { salesman: Profile; email: string }) {
   const [open, setOpen] = useState(false);
   const [state, formAction, pending] = useActionState(updateSalesman, null);
 
@@ -43,12 +43,16 @@ export function EditSalesmanModal({ salesman }: { salesman: Profile }) {
                 <Input id={`edit_phone_${salesman.id}`} name="phone" type="tel" defaultValue={salesman.phone ?? ""} />
               </div>
               <div>
+                <Label htmlFor={`edit_email_${salesman.id}`}>Email</Label>
+                <Input id={`edit_email_${salesman.id}`} name="email" type="email" defaultValue={email} placeholder="salesman@gmail.com" />
+              </div>
+              <div>
                 <Label htmlFor={`edit_username_${salesman.id}`}>User ID</Label>
                 <Input id={`edit_username_${salesman.id}`} name="username" defaultValue={salesman.username ?? ""} />
               </div>
               <div>
                 <Label htmlFor={`edit_password_${salesman.id}`}>Reset password</Label>
-                <Input id={`edit_password_${salesman.id}`} name="new_password" type="password" placeholder="Leave blank to keep current" />
+                <PasswordInput id={`edit_password_${salesman.id}`} name="new_password" placeholder="Leave blank to keep current" />
               </div>
 
               {state?.error && <p className="text-sm text-danger">{state.error}</p>}

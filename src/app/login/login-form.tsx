@@ -3,7 +3,7 @@
 import { useActionState } from "react";
 import { signIn } from "./actions";
 import { Button } from "@/components/ui/button";
-import { Input, Label } from "@/components/ui/input";
+import { Input, Label, PasswordInput } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 
 export function LoginForm({ deactivated }: { deactivated: boolean }) {
@@ -25,7 +25,7 @@ export function LoginForm({ deactivated }: { deactivated: boolean }) {
             </div>
             <div>
               <Label htmlFor="password">Password</Label>
-              <Input id="password" name="password" type="password" autoComplete="current-password" required placeholder="••••••••" />
+              <PasswordInput id="password" name="password" autoComplete="current-password" required placeholder="••••••••" />
             </div>
 
             {state?.error && (

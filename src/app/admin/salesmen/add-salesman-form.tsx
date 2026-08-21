@@ -3,7 +3,7 @@
 import { useActionState, useRef, useEffect, useState } from "react";
 import { createSalesman } from "./actions";
 import { Button } from "@/components/ui/button";
-import { Input, Label } from "@/components/ui/input";
+import { Input, Label, PasswordInput } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus, X } from "lucide-react";
 
@@ -53,7 +53,7 @@ export function AddSalesmanForm() {
           </div>
           <div>
             <Label htmlFor="password">Temporary password *</Label>
-            <Input id="password" name="password" minLength={6} required placeholder="min. 6 characters" />
+            <PasswordInput id="password" name="password" minLength={6} required placeholder="min. 6 characters" />
           </div>
           {state?.error && <p className="md:col-span-2 text-sm text-danger">{state.error}</p>}
           <div className="md:col-span-2">

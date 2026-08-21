@@ -20,8 +20,8 @@ export default async function AttendancePage({
 
   let query = supabase.from("punches").select("*").order("punch_in_at", { ascending: false }).limit(200);
   if (sp.salesman) query = query.eq("salesman_id", sp.salesman);
-  if (sp.from) query = query.gte("punch_in_at", `${sp.from}T00:00:00`);
-  if (sp.to) query = query.lte("punch_in_at", `${sp.to}T23:59:59`);
+  if (sp.from) query = query.gte("punch_in_at", `${sp.from}T00:00:00+05:30`);
+  if (sp.to) query = query.lte("punch_in_at", `${sp.to}T23:59:59+05:30`);
 
   const [{ data: punches }, { data: salesmen }] = await Promise.all([
     query,

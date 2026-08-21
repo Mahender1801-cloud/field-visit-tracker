@@ -3,14 +3,14 @@ import { createClient } from "@/lib/supabase/server";
 import { PunchCard } from "@/components/punch-card";
 import { Card, CardContent } from "@/components/ui/card";
 import { StatusBadge } from "@/components/ui/badge";
-import { formatTime, formatDuration } from "@/lib/utils";
+import { formatTime, formatDuration, istDateString } from "@/lib/utils";
 import Link from "next/link";
 import { ChevronRight, Store, MapPin } from "lucide-react";
 
 export default async function HomePage() {
   const profile = await requireProfile();
   const supabase = await createClient();
-  const today = new Date().toISOString().slice(0, 10);
+  const today = istDateString();
 
   const [{ data: openPunch }, { data: todaysVisits }] = await Promise.all([
     supabase

@@ -65,10 +65,12 @@ export async function updateSalesman(_prevState: { error: string; success?: stri
   const fullName = String(formData.get("full_name") ?? "").trim();
   const phone = String(formData.get("phone") ?? "").trim();
   const username = String(formData.get("username") ?? "").trim() || null;
+  const email = String(formData.get("email") ?? "").trim();
   const newPassword = String(formData.get("new_password") ?? "");
 
   if (!id || !fullName) return { error: "Name is required." };
   if (username && /\s/.test(username)) return { error: "User ID can't contain spaces." };
+  if (email && !email.includes("@")) return { error: "Enter a valid email address." };
   if (newPassword && newPassword.length < 6) return { error: "New password must be at least 6 characters." };
 
   const admin = createAdminClient();
@@ -84,9 +86,13 @@ export async function updateSalesman(_prevState: { error: string; success?: stri
 
   if (profileError) return { error: profileError.message };
 
-  if (newPassword) {
-    const { error: pwError } = await admin.auth.admin.updateUserById(id, { password: newPassword });
-    if (pwError) return { error: pwError.message };
+  if (email || newPassword) {
+    const authUpdate: { email?: string; password?: string } = {};
+    if (email) authUpdate.email = email;
+    if (newPassword) authUpdate.password = newPassword;
+
+    const { error: authError } = await admin.auth.admin.updateUserById(id, { ...authUpdate, email_confirm: true });
+    if (authError) return { error: authError.message };
   }
 
   revalidatePath("/admin/salesmen");

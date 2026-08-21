@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { istDateString } from "@/lib/utils";
 
 export async function submitExpense(_prevState: { error: string } | null, formData: FormData) {
   const supabase = await createClient();
@@ -32,7 +33,7 @@ export async function submitExpense(_prevState: { error: string } | null, formDa
   const { error } = await supabase.from("expenses").insert({
     id: expenseId,
     salesman_id: user.id,
-    expense_date: String(formData.get("expense_date") ?? new Date().toISOString().slice(0, 10)),
+    expense_date: String(formData.get("expense_date") ?? istDateString()),
     amount,
     note: String(formData.get("note") ?? "") || null,
     receipt_path: receiptPath,
