@@ -22,3 +22,12 @@ export function formatCurrency(value: number) {
     value,
   );
 }
+
+export function formatDuration(startIso: string, endIso: string | null) {
+  const ms = (endIso ? new Date(endIso) : new Date()).getTime() - new Date(startIso).getTime();
+  const mins = Math.max(0, Math.round(ms / 60000));
+  if (mins < 60) return `${mins}m`;
+  const hrs = Math.floor(mins / 60);
+  const rem = mins % 60;
+  return rem ? `${hrs}h ${rem}m` : `${hrs}h`;
+}

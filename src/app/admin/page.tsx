@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { VisitTrendChart, StateBarChart, StatusPieChart } from "@/components/charts";
 import { formatDate } from "@/lib/utils";
-import { Users, Store, CalendarCheck, TrendingUp } from "lucide-react";
+import { Users, Store, CalendarCheck, Radio } from "lucide-react";
 
 const DAY_MS = 86400000;
 
@@ -46,13 +46,14 @@ export default async function AdminDashboard() {
 
   const statusCounts: Record<string, number> = {};
   all.forEach((v) => {
-    statusCounts[v.status] = (statusCounts[v.status] || 0) + 1;
+    statusCounts[v.punch_out_at ? v.status : "In Progress"] = (statusCounts[v.punch_out_at ? v.status : "In Progress"] || 0) + 1;
   });
   const statusData = Object.entries(statusCounts).map(([name, value]) => ({ name, value }));
+  const currentlyAtShop = all.filter((v) => !v.punch_out_at).length;
 
   const kpis = [
     { label: "Today's Visits", value: todayVisits.length, icon: CalendarCheck },
-    { label: "This Week", value: weekVisits.length, icon: TrendingUp },
+    { label: "Currently at a Shop", value: currentlyAtShop, icon: Radio },
     { label: "Active Salesmen", value: activeSalesmen, sub: `of ${profiles?.length ?? 0} total`, icon: Users },
     { label: "Shops Visited", value: uniqueShops, sub: "unique, last 14 days", icon: Store },
   ];

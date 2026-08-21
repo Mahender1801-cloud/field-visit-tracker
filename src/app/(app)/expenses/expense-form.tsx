@@ -5,6 +5,7 @@ import { submitExpense } from "./actions";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
+import { PhotoCapture } from "@/components/photo-capture";
 
 export function ExpenseForm() {
   const [state, formAction, pending] = useActionState(submitExpense, null);
@@ -31,6 +32,10 @@ export function ExpenseForm() {
           <div>
             <Label htmlFor="note">Note</Label>
             <Input id="note" name="note" placeholder="e.g. fuel, toll" />
+          </div>
+          <div className="w-1/2 pr-1.5">
+            <Label>Bill / receipt (optional)</Label>
+            <PhotoCapture name="receipt" label="Add photo" capture="environment" />
           </div>
           {state?.error && <p className="text-sm text-danger">{state.error}</p>}
           <Button type="submit" className="w-full" disabled={pending}>

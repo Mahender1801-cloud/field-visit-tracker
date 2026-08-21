@@ -11,6 +11,7 @@ const statusStyles: Record<string, string> = {
   Pending: "bg-warning-bg text-warning",
   Approved: "bg-success-bg text-success",
   Rejected: "bg-danger-bg text-danger",
+  "In Progress": "bg-danger-bg text-danger animate-pulse",
 };
 
 export function StatusBadge({ status }: { status: VisitStatus | ExpenseStatus | string }) {

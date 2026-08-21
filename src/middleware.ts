@@ -1,6 +1,19 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+// Profile fields are forwarded to pages via request headers (see lib/auth.ts)
+// so every page doesn't have to re-run its own getUser() + profile query on
+// top of the one middleware already did — that redundant round trip was the
+// single biggest source of per-navigation latency.
+function profileHeaders(request: NextRequest, profile: { id: string; role: string; full_name: string; username: string | null }) {
+  const headers = new Headers(request.headers);
+  headers.set("x-user-id", profile.id);
+  headers.set("x-profile-role", profile.role);
+  headers.set("x-profile-name", encodeURIComponent(profile.full_name));
+  headers.set("x-profile-username", profile.username ? encodeURIComponent(profile.username) : "");
+  return headers;
+}
+
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({ request });
 
@@ -40,7 +53,7 @@ export async function middleware(request: NextRequest) {
   if (user && !isAuthPage) {
     const { data: profile } = await supabase
       .from("profiles")
-      .select("role, active")
+      .select("role, active, full_name, username")
       .eq("id", user.id)
       .single();
 
@@ -56,6 +69,15 @@ export async function middleware(request: NextRequest) {
       const url = request.nextUrl.clone();
       url.pathname = "/";
       return NextResponse.redirect(url);
+    }
+
+    if (profile) {
+      const finalResponse = NextResponse.next({
+        request: { headers: profileHeaders(request, { id: user.id, ...profile }) },
+      });
+      // carry over any Set-Cookie from a session refresh above
+      response.cookies.getAll().forEach((c) => finalResponse.cookies.set(c));
+      return finalResponse;
     }
   }
 

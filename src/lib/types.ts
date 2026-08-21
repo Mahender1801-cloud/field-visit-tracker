@@ -48,6 +48,9 @@ export type Visit = {
   longitude: number | null;
   selfie_path: string | null;
   visiting_card_path: string | null;
+  punch_out_at: string | null;
+  punch_out_lat: number | null;
+  punch_out_lng: number | null;
   created_at: string;
 };
 
@@ -58,6 +61,7 @@ export type Expense = {
   amount: number;
   note: string | null;
   status: ExpenseStatus;
+  receipt_path: string | null;
   reviewed_by: string | null;
   reviewed_at: string | null;
   created_at: string;

@@ -5,9 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatusBadge } from "@/components/ui/badge";
 import { SalesmanToggle } from "../salesman-toggle";
 import { EditSalesmanModal } from "../edit-salesman-modal";
-import { formatDate, formatTime, formatCurrency } from "@/lib/utils";
+import { ImageViewerButton } from "@/components/image-viewer";
+import { formatDate, formatTime, formatCurrency, formatDuration, cn } from "@/lib/utils";
 import Link from "next/link";
-import { ChevronLeft, Phone, MapPin } from "lucide-react";
+import { ChevronLeft, Phone, MapPin, Clock } from "lucide-react";
 
 export default async function SalesmanDetailPage({ params }: { params: Promise<{ id: string }> }) {
   await requireAdmin();
@@ -65,19 +66,26 @@ export default async function SalesmanDetailPage({ params }: { params: Promise<{
             <p className="py-8 text-center text-sm text-muted">No visits logged yet.</p>
           ) : (
             all.map((v) => (
-              <div key={v.id} className="rounded-xl border border-border p-3.5">
+              <div key={v.id} className={cn("rounded-xl border p-3.5", v.punch_out_at ? "border-border" : "border-danger/40")}>
                 <div className="flex items-start justify-between">
                   <div>
                     <p className="font-medium text-foreground">{v.shopkeeper_name}</p>
                     <p className="text-xs text-muted">{formatDate(v.visit_date)} · {formatTime(v.created_at)} · {v.type}</p>
                   </div>
-                  <StatusBadge status={v.status} />
+                  {v.punch_out_at ? <StatusBadge status={v.status} /> : <StatusBadge status="In Progress" />}
                 </div>
+                <p className="mt-1.5 flex items-center gap-1.5 text-xs text-muted"><Clock size={11} /> {formatDuration(v.created_at, v.punch_out_at)} at this shop</p>
                 {(v.city || v.area || v.state) && (
-                  <p className="mt-1.5 flex items-center gap-1.5 text-xs text-muted"><MapPin size={11} /> {[v.area, v.city, v.state].filter(Boolean).join(", ")}</p>
+                  <p className="flex items-center gap-1.5 text-xs text-muted"><MapPin size={11} /> {[v.area, v.city, v.state].filter(Boolean).join(", ")}</p>
                 )}
                 {v.phone && <p className="flex items-center gap-1.5 text-xs text-muted"><Phone size={11} /> {v.phone}</p>}
                 {v.feedback && <p className="mt-1 text-sm text-foreground/90">{v.feedback}</p>}
+                {(v.selfie_path || v.visiting_card_path) && (
+                  <div className="mt-2 flex gap-3">
+                    {v.selfie_path && <ImageViewerButton path={v.selfie_path} label="Selfie" />}
+                    {v.visiting_card_path && <ImageViewerButton path={v.visiting_card_path} label="Card" />}
+                  </div>
+                )}
               </div>
             ))
           )}

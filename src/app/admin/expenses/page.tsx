@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Card, CardContent } from "@/components/ui/card";
 import { StatusBadge } from "@/components/ui/badge";
 import { ReviewButtons } from "./review-buttons";
+import { ImageViewerButton } from "@/components/image-viewer";
 import { formatDate, formatCurrency } from "@/lib/utils";
 
 export default async function AdminExpensesPage() {
@@ -31,6 +32,7 @@ export default async function AdminExpensesPage() {
                 <th className="px-4 py-3">Salesman</th>
                 <th className="px-4 py-3">Amount</th>
                 <th className="px-4 py-3">Note</th>
+                <th className="px-4 py-3">Receipt</th>
                 <th className="px-4 py-3">Status</th>
               </tr>
             </thead>
@@ -42,13 +44,16 @@ export default async function AdminExpensesPage() {
                   <td className="px-4 py-3 text-foreground">{formatCurrency(Number(e.amount))}</td>
                   <td className="px-4 py-3 text-muted">{e.note ?? "—"}</td>
                   <td className="px-4 py-3">
+                    {e.receipt_path ? <ImageViewerButton path={e.receipt_path} label="View" /> : <span className="text-muted">—</span>}
+                  </td>
+                  <td className="px-4 py-3">
                     {e.status === "Pending" ? <ReviewButtons id={e.id} /> : <StatusBadge status={e.status} />}
                   </td>
                 </tr>
               ))}
               {!expenses?.length && (
                 <tr>
-                  <td colSpan={5} className="px-4 py-10 text-center text-muted">No expenses submitted yet.</td>
+                  <td colSpan={6} className="px-4 py-10 text-center text-muted">No expenses submitted yet.</td>
                 </tr>
               )}
             </tbody>

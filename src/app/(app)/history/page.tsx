@@ -4,8 +4,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { StatusBadge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { formatDate, formatTime, cn } from "@/lib/utils";
-import { Phone, MapPin } from "lucide-react";
+import { formatDate, formatTime, formatDuration, cn } from "@/lib/utils";
+import { Phone, MapPin, Clock } from "lucide-react";
+import Link from "next/link";
 
 type Period = "today" | "week" | "month" | "all";
 
@@ -100,33 +101,44 @@ export default async function HistoryPage({
         </p>
       ) : (
         <div className="space-y-3">
-          {visits.map((v) => (
-            <Card key={v.id}>
-              <CardContent className="space-y-2 py-4">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <p className="font-medium text-foreground">{v.shopkeeper_name}</p>
-                    <p className="text-xs text-muted">
-                      {formatDate(v.visit_date)} · {formatTime(v.created_at)} · {v.type}
-                    </p>
+          {visits.map((v) => {
+            const card = (
+              <Card className={!v.punch_out_at ? "border-danger/40" : undefined}>
+                <CardContent className="space-y-2 py-4">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <p className="font-medium text-foreground">{v.shopkeeper_name}</p>
+                      <p className="text-xs text-muted">
+                        {formatDate(v.visit_date)} · {formatTime(v.created_at)} · {v.type}
+                      </p>
+                    </div>
+                    {v.punch_out_at ? <StatusBadge status={v.status} /> : <StatusBadge status="In Progress" />}
                   </div>
-                  <StatusBadge status={v.status} />
-                </div>
 
-                {(v.city || v.area || v.state) && (
                   <p className="flex items-center gap-1.5 text-xs text-muted">
-                    <MapPin size={12} /> {[v.area, v.city, v.state].filter(Boolean).join(", ")}
+                    <Clock size={12} /> {formatDuration(v.created_at, v.punch_out_at)} at this shop
                   </p>
-                )}
-                {v.phone && (
-                  <p className="flex items-center gap-1.5 text-xs text-muted">
-                    <Phone size={12} /> {v.phone}
-                  </p>
-                )}
-                {v.feedback && <p className="text-sm text-foreground/90">{v.feedback}</p>}
-              </CardContent>
-            </Card>
-          ))}
+
+                  {(v.city || v.area || v.state) && (
+                    <p className="flex items-center gap-1.5 text-xs text-muted">
+                      <MapPin size={12} /> {[v.area, v.city, v.state].filter(Boolean).join(", ")}
+                    </p>
+                  )}
+                  {v.phone && (
+                    <p className="flex items-center gap-1.5 text-xs text-muted">
+                      <Phone size={12} /> {v.phone}
+                    </p>
+                  )}
+                  {v.feedback && <p className="text-sm text-foreground/90">{v.feedback}</p>}
+                </CardContent>
+              </Card>
+            );
+            return v.punch_out_at ? (
+              <div key={v.id}>{card}</div>
+            ) : (
+              <Link href={`/visit/${v.id}/punch-out`} key={v.id}>{card}</Link>
+            );
+          })}
         </div>
       )}
     </div>

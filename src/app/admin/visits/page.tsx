@@ -2,12 +2,13 @@ import { createClient } from "@/lib/supabase/server";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, Input } from "@/components/ui/input";
 import { StatusBadge } from "@/components/ui/badge";
-import { formatDate, formatTime } from "@/lib/utils";
+import { formatDate, formatTime, formatDuration } from "@/lib/utils";
 import { VISIT_STATUSES, SHOP_TYPES } from "@/lib/constants";
 import { ExportCsvButton } from "./export-button";
-import { PhotoLink } from "./photo-link";
+import { ExportZipButton } from "./export-zip-button";
 import { Button } from "@/components/ui/button";
 import { VisitsMapLoader } from "@/components/visits-map-loader";
+import { ImageViewerButton } from "@/components/image-viewer";
 import type { VisitStatus, ShopType } from "@/lib/types";
 
 export default async function AdminVisitsPage({
@@ -48,7 +49,10 @@ export default async function AdminVisitsPage({
           <h1 className="text-xl font-semibold text-foreground">Visits</h1>
           <p className="text-sm text-muted">{rows.length} visit{rows.length === 1 ? "" : "s"}</p>
         </div>
-        <ExportCsvButton rows={rows} />
+        <div className="flex gap-2">
+          <ExportCsvButton rows={rows} />
+          <ExportZipButton />
+        </div>
       </div>
 
       <Card>
@@ -116,6 +120,7 @@ export default async function AdminVisitsPage({
                 <th className="px-4 py-3">Shop</th>
                 <th className="px-4 py-3">Location</th>
                 <th className="px-4 py-3">Type</th>
+                <th className="px-4 py-3">Duration</th>
                 <th className="px-4 py-3">Status</th>
                 <th className="px-4 py-3">Photos</th>
               </tr>
@@ -131,18 +136,19 @@ export default async function AdminVisitsPage({
                   </td>
                   <td className="px-4 py-3 text-muted">{[v.area, v.city, v.state].filter(Boolean).join(", ") || "—"}</td>
                   <td className="px-4 py-3 text-muted">{v.type}</td>
-                  <td className="px-4 py-3"><StatusBadge status={v.status} /></td>
+                  <td className="px-4 py-3 text-muted">{formatDuration(v.created_at, v.punch_out_at)}</td>
+                  <td className="px-4 py-3">{v.punch_out_at ? <StatusBadge status={v.status} /> : <StatusBadge status="In Progress" />}</td>
                   <td className="px-4 py-3">
                     <div className="flex gap-2">
-                      {v.selfie_path && <PhotoLink path={v.selfie_path} label="Selfie" />}
-                      {v.visiting_card_path && <PhotoLink path={v.visiting_card_path} label="Card" />}
+                      {v.selfie_path && <ImageViewerButton path={v.selfie_path} label="Selfie" />}
+                      {v.visiting_card_path && <ImageViewerButton path={v.visiting_card_path} label="Card" />}
                     </div>
                   </td>
                 </tr>
               ))}
               {!rows.length && (
                 <tr>
-                  <td colSpan={7} className="px-4 py-10 text-center text-muted">No visits match these filters.</td>
+                  <td colSpan={8} className="px-4 py-10 text-center text-muted">No visits match these filters.</td>
                 </tr>
               )}
             </tbody>

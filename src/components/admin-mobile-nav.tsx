@@ -9,6 +9,7 @@ import { LogOut } from "lucide-react";
 const items = [
   { href: "/admin", label: "Dashboard" },
   { href: "/admin/visits", label: "Visits" },
+  { href: "/admin/attendance", label: "Attendance" },
   { href: "/admin/salesmen", label: "Salesmen" },
   { href: "/admin/expenses", label: "Expenses" },
   { href: "/admin/settings", label: "Settings" },

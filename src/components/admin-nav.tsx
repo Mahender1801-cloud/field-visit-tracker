@@ -3,12 +3,13 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { LayoutDashboard, ListChecks, Users, Wallet, LogOut, Settings } from "lucide-react";
+import { LayoutDashboard, ListChecks, Users, Wallet, LogOut, Settings, Clock4 } from "lucide-react";
 import { signOutAdmin } from "@/app/admin/actions";
 
 const items = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/visits", label: "Visits", icon: ListChecks },
+  { href: "/admin/attendance", label: "Attendance", icon: Clock4 },
   { href: "/admin/salesmen", label: "Salesmen", icon: Users },
   { href: "/admin/expenses", label: "Expenses", icon: Wallet },
 ];

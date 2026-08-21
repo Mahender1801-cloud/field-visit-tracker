@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { ExpenseForm } from "./expense-form";
 import { Card, CardContent } from "@/components/ui/card";
 import { StatusBadge } from "@/components/ui/badge";
+import { ImageViewerButton } from "@/components/image-viewer";
 import { formatDate, formatCurrency } from "@/lib/utils";
 
 export default async function ExpensesPage() {
@@ -40,6 +41,11 @@ export default async function ExpensesPage() {
                 <div>
                   <p className="font-medium text-foreground">{formatCurrency(Number(e.amount))}</p>
                   <p className="text-xs text-muted">{formatDate(e.expense_date)}{e.note ? ` · ${e.note}` : ""}</p>
+                  {e.receipt_path && (
+                    <div className="mt-1">
+                      <ImageViewerButton path={e.receipt_path} label="View receipt" />
+                    </div>
+                  )}
                 </div>
                 <StatusBadge status={e.status} />
               </CardContent>

@@ -4,7 +4,7 @@ import Papa from "papaparse";
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 import type { Visit } from "@/lib/types";
-import { formatDate } from "@/lib/utils";
+import { formatDate, formatTime, formatDuration } from "@/lib/utils";
 
 export function ExportCsvButton({ rows }: { rows: (Visit & { salesman_name: string })[] }) {
   function exportCsv() {
@@ -18,7 +18,10 @@ export function ExportCsvButton({ rows }: { rows: (Visit & { salesman_name: stri
         State: v.state ?? "",
         City: v.city ?? "",
         Area: v.area ?? "",
-        Status: v.status,
+        Status: v.punch_out_at ? v.status : "In Progress",
+        "Punch In": formatTime(v.created_at),
+        "Punch Out": v.punch_out_at ? formatTime(v.punch_out_at) : "",
+        "Time at Shop": formatDuration(v.created_at, v.punch_out_at),
         Feedback: v.feedback ?? "",
         Latitude: v.latitude ?? "",
         Longitude: v.longitude ?? "",
